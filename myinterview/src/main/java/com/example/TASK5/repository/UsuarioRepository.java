@@ -1,8 +1,10 @@
 package com.example.TASK5.repository;
 
 import com.example.TASK5.conn.ConnectionFactory;
+import com.example.TASK5.dto.UsuarioDto;
 import com.example.TASK5.model.Usuario;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,9 +13,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 @Log4j2
 public class UsuarioRepository {
-    public static void save(Usuario usuario) {
+    public void save(Usuario usuario) {
         String sql = "INSERT INTO `usuario_db`.`usuario` (`nome`, `email`, `idade`, `altura`) VALUES ('" + usuario.getNome() + "',\n" +
                 "'" + usuario.getEmail() + "',\n" +
                 "'" + usuario.getIdade() + "',\n" +
@@ -28,7 +31,7 @@ public class UsuarioRepository {
         }
     }
 
-    public static List<Usuario> findAllUsuarios() {
+    public List<Usuario> findAllUsuarios() {
         log.info("Finding all Users");
         String sql = "SELECT *\n" +
                 "FROM `usuario_db`.`usuario`;";
@@ -47,7 +50,7 @@ public class UsuarioRepository {
     }
 
     // Encontra usuario pelo seu id
-    public static Usuario findUsuarioById(int id) {
+    public Usuario findUsuarioById(int id) {
 
         String sql = "SELECT * FROM usuario_db.usuario WHERE id = " + id + ";";
 
@@ -57,7 +60,6 @@ public class UsuarioRepository {
             Usuario usuario = null;
             if (rs.next()) {
                 usuario = convertString2User(rs);
-                System.out.println(usuario);
             }
 
             return usuario;
@@ -66,7 +68,7 @@ public class UsuarioRepository {
         }
     }
 
-    public static List<Usuario> findUsuarioByUser(String typedUser) {
+    public List<Usuario> findUsuarioByUser(String typedUser) {
         log.info("Finding all {}", typedUser);
         String sql = "SELECT *\n" +
                 "FROM `usuario_db`.`usuario` WHERE nome LIKE '" + typedUser + "%';";
@@ -85,7 +87,7 @@ public class UsuarioRepository {
         }
     }
 
-    public static void delete(int id) {
+    public void delete(int id) {
         String sql = "DELETE FROM `usuario_db`.`usuario` WHERE (`id` = '" + id + "');";
         try (Connection conn = ConnectionFactory.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -96,20 +98,19 @@ public class UsuarioRepository {
         }
     }
 
-    public static void update(Usuario usuario) {
+    public void update(int id, UsuarioDto usuario) {
         String sql = "UPDATE `usuario_db`.`usuario`\n " +
                 "SET `nome` = '" + usuario.getNome() + "', \n" +
                 "`email` = '" + usuario.getEmail() + "',\n" +
                 " `idade` = " + usuario.getIdade() + ",\n" +
                 " `altura` = " + usuario.getAltura() + "\n" +
-                " WHERE `id` = " + usuario.getId() + ";";
-        ;
+                " WHERE `id` = " + id + ";";
         try (Connection conn = ConnectionFactory.getConnection();
              Statement stmt = conn.createStatement()) {
             int rowsAffected = stmt.executeUpdate(sql);
-            log.info("Updated producer '{}', rows affected '{}' ", usuario.getId(), rowsAffected);
+            log.info("Updated producer '{}', rows affected '{}' ", id, rowsAffected);
         } catch (SQLException e) {
-            log.error("Error while trying to update producer '{}'", usuario.getId(), e);
+            log.error("Error while trying to update producer '{}'", id, e);
         }
     }
 
@@ -120,7 +121,7 @@ public class UsuarioRepository {
         int idade = rs.getInt("idade");
         double altura = rs.getDouble("altura");
 
-        return new Usuario(rs.getInt("id"), rs.getString("nome"), rs.getString("email"), rs.getInt("idade"), rs.getDouble("altura"));
+        return new Usuario(id, nome, email, idade, altura);
     }
 
 }

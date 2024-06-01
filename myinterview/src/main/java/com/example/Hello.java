@@ -32,7 +32,8 @@ public class Hello {
      */
     public void sayHello(PrintStream printer) {
         for (short i = 0; i < times; i++) {
-            printer.println(HELLO);
+            printer.print(HELLO); // Utilize print() para não adicionar uma nova linha automática
+            printer.print("\r\n");
         }
     }
 

@@ -1,7 +1,7 @@
 package com.example.TASK5.model;
 
+import com.example.TASK5.dto.UsuarioDto;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -15,11 +15,11 @@ public class Usuario {
         private int idade;
         private double altura;
 
-        public Usuario(String nome, String email, int idade, double altura) {
-                this.nome = nome;
-                this.email = email;
-                this.idade = idade;
-                this.altura = altura;
+        public Usuario(UsuarioDto dto) {
+                this.nome = dto.getNome();
+                this.email = dto.getEmail();
+                this.idade = dto.getIdade();
+                this.altura = dto.getAltura();
         }
 
         public Usuario(int id, String nome, String email, int idade, double altura) {
